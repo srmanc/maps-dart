@@ -752,7 +752,7 @@ class MapboxMap extends Camera {
   ///  @see [Create and style clusters](https://www.mapbox.com/mapbox-gl-js/example/cluster/)
   ///  @see [Add a vector tile source](https://www.mapbox.com/mapbox-gl-js/example/vector-source/)
   ///  @see [Add a WMS source](https://www.mapbox.com/mapbox-gl-js/example/wms/)
-  MapboxMap addLayer(dynamic layer, [String? beforeId]) {
+  MapboxMap addLayer(dynamic layer, [String? beforeId]) {    
     if (layer is Layer) {
       return MapboxMap.fromJsObject(
           jsObject.addLayer(layer.jsObject, beforeId));
@@ -1322,8 +1322,10 @@ class MapOptions extends JsObjectWrapper<MapOptionsJsImpl> {
         renderWorldCopies: renderWorldCopies,
         maxTileCacheSize: maxTileCacheSize,
         localIdeographFontFamily: localIdeographFontFamily,
-        transformRequest:
-            transformRequest != null ? allowInterop(transformRequest) : null,
+        transformRequest: transformRequest != null
+            ? allowInterop((url, resourceType) =>
+                transformRequest(url, resourceType)?.jsObject)
+            : null,
         collectResourceTiming: collectResourceTiming,
         fadeDuration: fadeDuration,
         crossSourceCollisions: crossSourceCollisions,
@@ -1359,7 +1361,7 @@ class RequestParameters extends JsObjectWrapper<RequestParametersJsImpl> {
       RequestParameters.fromJsObject(RequestParametersJsImpl(
         url: url,
         credentials: credentials,
-        headers: headers,
+        headers: headers != null ? jsify(headers) : null,
         method: method,
         collectResourceTiming: collectResourceTiming,
       ));
